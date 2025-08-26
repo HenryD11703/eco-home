@@ -45,3 +45,52 @@ Este proyecto fue desarrollado utilizando un stack de tecnologías que incluye:
 ### Panel de Administración
 
 ![Panel de Administración](docs/admin.png)
+
+## Instalación
+
+Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/HenryD11703/eco-home.git
+   cd eco-home
+   ```
+
+2. Instala las dependencias del backend:
+   ```bash
+   cd server
+   npm install
+   ```
+
+3. Configura las variables de entorno:
+   ```
+    PORT=4000
+    JWT_SECRET=Secreto_para_jwt
+    MONGO_INITDB_ROOT_USERNAME=ecoAdmin
+    MONGO_INITDB_ROOT_PASSWORD=superSecreta123
+    MONGO_INITDB_DATABASE=ecoMarketDB
+    MONGO_URI=mongodb://ecoAdmin:superSecreta123@localhost:27017/ecoMarketDB?authSource=admin
+   ```
+4. Inicia el servidor backend:
+   ```bash
+   npm run dev
+   ```
+
+5. Instala las dependencias del frontend:
+   ```bash
+   cd client
+   npm install
+   ```
+
+6. Inicia la aplicación frontend:
+   ```bash
+   npm run dev
+   ```
+
+7. Inicia el contenedor de MongoDB:
+   ```bash
+   cd database
+   docker-compose up -d
+   ```
+
+Ahora deberías poder acceder a la aplicación en `http://localhost:5173`.
