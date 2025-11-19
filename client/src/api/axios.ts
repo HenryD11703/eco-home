@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api' // Usamos el proxy de Vite
+  baseURL: 'https://eco-home.onrender.com/api' // Usamos el proxy de Vite
 });
 
 // Interceptor para añadir el token a las peticiones
