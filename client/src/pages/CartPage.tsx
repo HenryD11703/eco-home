@@ -7,6 +7,7 @@ import {
   FaArrowRight, 
   FaTrash 
 } from 'react-icons/fa';
+import api from '../api/axios';
 import { useCart } from '../context/CartContext';
 
 interface CartItem {
@@ -30,17 +31,12 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/orders/create-invoice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cartItems, total: subtotal }),
-      });
+      const response = await api.post('/orders/create-invoice', 
+        { cartItems, total: subtotal },
+        { responseType: 'blob' }
+      );
 
-      if (!response.ok) throw new Error('Error al generar la factura');
-
-      const blob = await response.blob();
+      const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
