@@ -13,6 +13,7 @@ import {
   FaSpinner
 } from 'react-icons/fa';
 import api from '../api/axios';
+import { useCart } from '../context/CartContext';
 
 interface Product {
   _id: string;
@@ -29,6 +30,8 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+  
+  const { addToCart } = useCart();
 
   const categories = [
     { id: null, name: 'Todos', icon: '🌿' },
@@ -71,9 +74,14 @@ const ProductsPage = () => {
     setFilteredProducts(filtered);
   }, [searchTerm, products]);
 
-  const handleAddToCart = (_productId: string, productName: string) => {
-    // Aquí implementarías la lógica del carrito
-    showNotification('success', `${productName} añadido al carrito`);
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      qty: 1
+    });
+    showNotification('success', `${product.name} añadido al carrito`);
   };
 
   const ProductCard = ({ product }: { product: Product }) => (
@@ -127,7 +135,7 @@ const ProductsPage = () => {
         </div>
 
         <button
-          onClick={() => handleAddToCart(product._id, product.name)}
+          onClick={() => handleAddToCart(product)}
           className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
         >
           <FaShoppingCart className="text-sm" />

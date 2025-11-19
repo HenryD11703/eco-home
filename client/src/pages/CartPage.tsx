@@ -17,7 +17,7 @@ interface CartItem {
 }
 
 const CartPage = () => {
-  const { cartItems } = useCart();
+  const { cartItems, removeFromCart, clearCart } = useCart();
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
   const subtotal = cartItems.reduce((acc, item: CartItem) => acc + item.price * item.qty, 0);
 
@@ -28,9 +28,34 @@ const CartPage = () => {
     }, 4000);
   };
 
-  const handleCheckout = () => {
-    showNotification('success', 'Compra simulada completada. ¡Gracias!');
-    // Placeholder for cart clearing logic
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/orders/create-invoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cartItems, total: subtotal }),
+      });
+
+      if (!response.ok) throw new Error('Error al generar la factura');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `factura-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      clearCart();
+      showNotification('success', 'Compra completada. Factura descargada.');
+    } catch (error) {
+      console.error(error);
+      showNotification('error', 'Error al procesar la compra');
+    }
   };
 
   return (
@@ -109,7 +134,10 @@ const CartPage = () => {
                     </div>
                     <button
                       className="text-gray-400 hover:text-red-500 transition-colors duration-200"
-                      onClick={() => showNotification('success', `${item.name} eliminado del carrito`)} // Placeholder for remove logic
+                      onClick={() => {
+                        removeFromCart(item._id);
+                        showNotification('success', `${item.name} eliminado del carrito`);
+                      }}
                     >
                       <FaTrash className="text-lg" />
                     </button>
